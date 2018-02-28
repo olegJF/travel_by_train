@@ -3,12 +3,13 @@ from django.urls import reverse
 
 
 class City(models.Model):
-    name = models.CharField(max_length=50, verbose_name = 'Населенный пункт')
+    name = models.CharField(max_length=50, verbose_name = 'Населенный пункт', unique=True)
     
 
     class Meta:
         verbose_name = 'Населенный пункт'
-        verbose_name_plural = 'Населенный пункт'
+        verbose_name_plural = 'Населенные пункты'
+        ordering = ['name']
     
     def __str__(self):
         return self.name
