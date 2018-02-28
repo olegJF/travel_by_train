@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{%load staticfiles%}
+{% block title %}Населенные пункты{% endblock %}
+
+{% block content %}
+<div  class="container">
+    <h2 class="centr"><span>Детальная информация</span></h2>
+
+   <div class="row">
+        <div class="col-md-12 mx-auto">
+            <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">&nbsp;</th>
+                    <th scope="col">&nbsp;</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Название</td>
+                    <td>{{ object.name }}</td>
+                </tr>
+                
+                
+            </tbody>
+            </table>
+                <a href="{%url 'city:home' %}">
+                    <button type="button" class='btn btn-light ' >
+                        Назад к списку 
+                    </button>
+                </a>   
+                <a href="{%url 'city:update' pk=object.id %}">
+                    <button type="button" class='btn btn-info ' >
+                        Редактировать
+                    </button>
+                </a>
+                
+    
+        </div>
+    </div>
+</div>
+{% endblock %}
