@@ -5,7 +5,6 @@ from django.urls import reverse
 class City(models.Model):
     name = models.CharField(max_length=50, verbose_name = 'Населенный пункт', unique=True)
     
-
     class Meta:
         verbose_name = 'Населенный пункт'
         verbose_name_plural = 'Населенные пункты'
