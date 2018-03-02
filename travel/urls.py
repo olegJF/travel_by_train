@@ -21,5 +21,7 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^cities/', include('cities.urls', namespace='city')),
     url(r'^trains/', include('trains.urls', namespace='train')),
+    url(r'^find/', views.find_routes, name='find_routes'),
+    url(r'^add/', views.add_route, name='add_route'),
     url(r'^', views.home, name='home'),
 ]

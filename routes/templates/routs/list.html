@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{%load staticfiles%}
+{% block title %}Список поездов{% endblock %}
+
+{% block content %}
+<div  class="container">
+    <h2 class="centr"><span>Список поездов</span></h2>
+   
+   <div class="row">
+        <div class="col">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        
+                        <th scope="col">Номер поезда</th>
+                        <th scope="col">Откуда</th>
+                        <th scope="col">Куда</th>
+                        <th scope="col">Время в пути</th>
+                        <th scope="col">&nbsp;</th>
+                        <th scope="col">&nbsp;</th>
+                        
+                        
+                        
+                    </tr>
+                </thead>
+
+                <tbody>
+                    
+                    {% for object in objects_list %}
+                        <tr>
+                            
+                            <td ><a href="{%url 'train:detail' pk=object.id %}">{{ object.name }} </a></td>
+                            <td >{{ object.from_city }} </td>
+                            <td >{{ object.to_city }} </td>
+                            <td >{{ object.travel_time }} </td>
+                            <td>
+                                <a href="{%url 'train:update' pk=object.id %}">
+                                    <button type="button" class='btn btn-info btn-sm'>
+                                        Редактировать
+                                    </button>
+                                </a>
+                            </td>
+                            <td>
+                                <a href="{%url 'train:delete' pk=object.id %}">
+                                    <button type="button" class='btn btn-danger btn-sm' >
+                                        Удалить
+                                    </button>
+                                </a>
+                            
+                            </td>
+                        </tr>
+                    
+                    {% endfor %}
+                </tbody>
+            </table>
+            
+            
+
+            
+            
+            
+        </div>
+    </div>
+
+
+</div>
+{% endblock %}
