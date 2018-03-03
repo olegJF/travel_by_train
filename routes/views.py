@@ -36,16 +36,54 @@ def dfs_paths(graph, start, goal):
                 stack.append((next, path + [next]))
 
 
-
-
 def home(request):
     form = RouteForm()
-    return render(request, 'routs/home.html', {'form':form})
+    return render(request, 'routes/home.html', {'form':form})
     
 def add_route(request):
+    if request.method == "POST":
+        # print(request.POST)
+        form = RouteModelForm(request.POST or None)
+        if form.is_valid():
+            data = form.cleaned_data
+            f_name = data['name']
+            f_from_city = data['from_city']
+            f_to_city = data['to_city']
+            f_travel_time = data['travel_time']
+            f_trains = data['trouth_cities'].replace('[','').replace(']','').split(' ')
+            # print('f_trains', f_trains)
+            trains =[int(x) for x in f_trains if x.isalnum()]
+            qs = Train.objects.filter(id__in=trains)
+            # print('trains', trains)
+            route = Route(name=f_name, from_city=f_from_city, to_city=f_to_city, travel_time=f_travel_time)
+            route.save()
+            for tr in qs:
+                route.trouth_cities.add(tr.id )
+            
+            return redirect('/list')
+        else:
+            return render(request, 'routes/create.html', {"form": form})
+    
     if request.method == "GET":
-        print(request.GET)
-    return redirect('/')
+        data = request.GET
+        from_city = data['from_city']
+        to_city = data['to_city']
+        trouth_cities = data['trouth_cities'].split(' ')
+        trains =[int(x) for x in trouth_cities if x.isalnum()]
+        # print(trains)
+        trains_list = ''
+        for i in trains:
+            trains_list += str(i) + ' '
+        qs = Train.objects.filter(id__in=trains)
+        route = ''
+        for tr in qs:
+            f_data = {'name': tr.name, 'from_': tr.from_city, 'to': tr.to_city, 'time':tr.travel_time }
+            route += 'Поезд № {name}, следующий из {from_} в {to} .Время в пути {time} \n'.format(**f_data)
+            
+        travel_time = data['travel_time']
+        form = RouteModelForm(initial={'from_city': from_city, 'to_city': to_city, 'routes': route,
+                                'trouth_cities': trains_list, 'travel_time': travel_time})
+    return render(request, 'routes/create.html', {'form':form})
  
     
 def find_routes(request):
@@ -53,16 +91,17 @@ def find_routes(request):
         form = RouteForm(request.POST or None)
         if form.is_valid():
             all_routes = {}
+            cities = {}
             trouth_city = []
             right_ways = []
             data = form.cleaned_data
-            from_city = data['from_city'].id
-            to_city = data['to_city'].id
+            from_city = data['from_city']
+            to_city = data['to_city']
             trouth_cities_qs = data['trouth_cities']
             traveling_time = data['traveling_time']
             # print('traveling_time', traveling_time, 'from_city', from_city, 'to_city', to_city, 'trouth_cities', trouth_cities_qs)
             all_routes = get_set_of_all_routes()
-            all_ways = list(dfs_paths(all_routes, from_city, to_city))
+            all_ways = list(dfs_paths(all_routes, from_city.id, to_city.id))
             if trouth_cities_qs.exists():
                 for city in trouth_cities_qs:
                     trouth_city.append(city.id)
@@ -73,7 +112,7 @@ def find_routes(request):
                 if not right_ways:
                     
                     messages.error(request, 'Маршрут через эти города невозможен!')
-                    return render(request, 'routs/home.html', {"form": form})
+                    return render(request, 'routes/home.html', {"form": form})
             else:
                 right_ways = all_ways
             trains = []
@@ -89,18 +128,19 @@ def find_routes(request):
                     trains.append(_tmp)
             if not trains:
                 messages.error(request, 'Время в дороге больше выбранного Вами! Измените время.')
-                return render(request, 'routs/home.html', {"form": form})    
+                return render(request, 'routes/home.html', {"form": form})    
             # print(right_ways)    
             # print(trains)
             routes = []
+            cities = {'from_city': from_city.name, 'to_city': to_city.name}
             for tr in trains:
                 total_time = tr.pop()
-                routes.append({ 'route': tr, 'time': total_time})
+                routes.append({ 'route': tr, 'time': total_time, 'from_city': from_city.name, 'to_city': to_city.name})
                 
-            # print(routes)
-            return render(request, 'routs/home.html', {"form": form, 'routes':routes})
+            
+            return render(request, 'routes/home.html', {"form": form, 'routes':routes, 'cities': cities})
         else:
-            return render(request, 'routs/home.html', {"form": form})
+            return render(request, 'routes/home.html', {"form": form})
             
 
 class RouteDetail(DetailView):
@@ -117,7 +157,7 @@ class RouteList(ListView):
 
 class RouteDelete(DeleteView):
     model = Route
-    success_url = reverse_lazy('home')
+    success_url = reverse_lazy('list')
     
     def get(self, request, *args, **kwargs):
             return self.post(request, *args, **kwargs)

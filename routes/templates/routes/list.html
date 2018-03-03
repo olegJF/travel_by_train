@@ -1,10 +1,10 @@
 {% extends 'base.html' %}
 {%load staticfiles%}
-{% block title %}Список поездов{% endblock %}
+{% block title %}Список маршрутов{% endblock %}
 
 {% block content %}
 <div  class="container">
-    <h2 class="centr"><span>Список поездов</span></h2>
+    <h2 class="centr"><span>Список маршрутов</span></h2>
    
    <div class="row">
         <div class="col">
@@ -29,19 +29,19 @@
                     {% for object in objects_list %}
                         <tr>
                             
-                            <td ><a href="{%url 'train:detail' pk=object.id %}">{{ object.name }} </a></td>
+                            <td ><a href="{%url 'detail' pk=object.id %}">{{ object.name }} </a></td>
                             <td >{{ object.from_city }} </td>
                             <td >{{ object.to_city }} </td>
                             <td >{{ object.travel_time }} </td>
                             <td>
-                                <a href="{%url 'train:update' pk=object.id %}">
+                                <a href="{%url 'detail' pk=object.id %}">
                                     <button type="button" class='btn btn-info btn-sm'>
-                                        Редактировать
+                                        Детали
                                     </button>
                                 </a>
                             </td>
                             <td>
-                                <a href="{%url 'train:delete' pk=object.id %}">
+                                <a href="{%url 'delete' pk=object.id %}">
                                     <button type="button" class='btn btn-danger btn-sm' >
                                         Удалить
                                     </button>

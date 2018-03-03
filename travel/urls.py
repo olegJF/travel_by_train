@@ -23,5 +23,8 @@ urlpatterns = [
     url(r'^trains/', include('trains.urls', namespace='train')),
     url(r'^find/', views.find_routes, name='find_routes'),
     url(r'^add/', views.add_route, name='add_route'),
+    url(r'^detail/(?P<pk>\d+)/$', views.RouteDetail.as_view(), name='detail'),
+    url(r'^list/', views.RouteList.as_view(), name='list'),
+    url(r'^delete/(?P<pk>\d+)/$', views.RouteDelete.as_view(), name='delete'),
     url(r'^', views.home, name='home'),
 ]

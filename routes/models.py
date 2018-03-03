@@ -5,9 +5,9 @@ from trains.models import Train
 
 class Route(models.Model):
     name = models.CharField(max_length=50, verbose_name = 'Название маршрута', unique=True)
-    from_Train = models.ForeignKey(Train, verbose_name='Откуда', on_delete=models.CASCADE, related_name="begin")
-    to_Train = models.ForeignKey(Train, verbose_name='Куда', on_delete=models.CASCADE, related_name="end")
-    trouth_cities = models.ManyToManyField(Train, verbose_name='Через города', blank=True, related_name="trouth_cities")
+    from_city = models.CharField(max_length=50, verbose_name='Откуда')
+    to_city = models.CharField(max_length=50, verbose_name='Куда')
+    trouth_cities = models.ManyToManyField(Train, verbose_name='Через города', blank=True)
     travel_time = models.IntegerField(verbose_name='Время в пути')
     
     class Meta:
