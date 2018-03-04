@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.core.urlresolvers import reverse_lazy
 from django.core.paginator import Paginator, InvalidPage
 from django.views.generic import DetailView, CreateView, UpdateView, DeleteView
@@ -32,7 +32,8 @@ class CityUpdate(UpdateView):
     form_class = CityForm
     template_name = 'cities/create.html'
     success_url = reverse_lazy('city:home')
-    
+
+
 def home(request, page_number=1):
     cities = City.objects.all()
     current_page = Paginator(cities, 10)

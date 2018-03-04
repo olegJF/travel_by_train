@@ -16,30 +16,32 @@ def get_set_of_all_routes():
     unq_cities = City.objects.filter(pk__in=un)
     all_routes = {}
     for city in unq_cities:
-        from_= city.id
+        from_ = city.id
         tmp = set()
         trains = Train.objects.filter(from_city=city.id)
         for tr in trains:
             tmp.add(tr.to_city.id)
-        all_routes[from_]=set(tmp)
+        all_routes[from_] = set(tmp)
     
     return all_routes
+
 
 def dfs_paths(graph, start, goal):
     stack = [(start, [start])]
     while stack:
         (vertex, path) = stack.pop()
-        for next in graph[vertex] - set(path):
-            if next == goal:
-                yield path + [next]
+        for next_ in graph[vertex] - set(path):
+            if next_ == goal:
+                yield path + [next_]
             else:
-                stack.append((next, path + [next]))
+                stack.append((next_, path + [next_]))
 
 
 def home(request):
     form = RouteForm()
-    return render(request, 'routes/home.html', {'form':form})
-    
+    return render(request, 'routes/home.html', {'form': form})
+
+
 def add_route(request):
     if request.method == "POST":
         # print(request.POST)
@@ -50,17 +52,17 @@ def add_route(request):
             f_from_city = data['from_city']
             f_to_city = data['to_city']
             f_travel_time = data['travel_time']
-            f_trains = data['trouth_cities'].replace('[','').replace(']','').split(' ')
+            f_trains = data['trouth_cities'].replace('[', '').replace(']', '').split(' ')
             # print('f_trains', f_trains)
-            trains =[int(x) for x in f_trains if x.isalnum()]
+            trains = [int(x) for x in f_trains if x.isalnum()]
             qs = Train.objects.filter(id__in=trains)
             # print('trains', trains)
             route = Route(name=f_name, from_city=f_from_city, to_city=f_to_city, travel_time=f_travel_time)
             route.save()
             for tr in qs:
-                route.trouth_cities.add(tr.id )
+                route.trouth_cities.add(tr.id)
             
-            return redirect('/list')
+            return redirect('/list/')
         else:
             return render(request, 'routes/create.html', {"form": form})
     
@@ -69,7 +71,7 @@ def add_route(request):
         from_city = data['from_city']
         to_city = data['to_city']
         trouth_cities = data['trouth_cities'].split(' ')
-        trains =[int(x) for x in trouth_cities if x.isalnum()]
+        trains = [int(x) for x in trouth_cities if x.isalnum()]
         # print(trains)
         trains_list = ''
         for i in trains:
@@ -77,13 +79,13 @@ def add_route(request):
         qs = Train.objects.filter(id__in=trains)
         route = ''
         for tr in qs:
-            f_data = {'name': tr.name, 'from_': tr.from_city, 'to': tr.to_city, 'time':tr.travel_time }
+            f_data = {'name': tr.name, 'from_': tr.from_city, 'to': tr.to_city, 'time': tr.travel_time}
             route += 'Поезд № {name}, следующий из {from_} в {to} .Время в пути {time} \n'.format(**f_data)
             
         travel_time = data['travel_time']
         form = RouteModelForm(initial={'from_city': from_city, 'to_city': to_city, 'routes': route,
-                                'trouth_cities': trains_list, 'travel_time': travel_time})
-    return render(request, 'routes/create.html', {'form':form})
+                                       'trouth_cities': trains_list, 'travel_time': travel_time})
+    return render(request, 'routes/create.html', {'form': form})
  
     
 def find_routes(request):
@@ -99,7 +101,6 @@ def find_routes(request):
             to_city = data['to_city']
             trouth_cities_qs = data['trouth_cities']
             traveling_time = data['traveling_time']
-            # print('traveling_time', traveling_time, 'from_city', from_city, 'to_city', to_city, 'trouth_cities', trouth_cities_qs)
             all_routes = get_set_of_all_routes()
             all_ways = list(dfs_paths(all_routes, from_city.id, to_city.id))
             if trouth_cities_qs.exists():
@@ -116,11 +117,12 @@ def find_routes(request):
             else:
                 right_ways = all_ways
             trains = []
-            for  route in right_ways:
+            for route in right_ways:
                 _tmp = []
                 total_time = 0
                 for index in range(len(route)-1):
-                    qs = Train.objects.filter(from_city=route[index], to_city=route[index+1]).order_by('travel_time').first()
+                    qs = Train.objects.filter(from_city=route[index],
+                                              to_city=route[index+1]).order_by('travel_time').first()
                     total_time += qs.travel_time
                     _tmp.append(qs)
                 _tmp.append(total_time)
@@ -135,10 +137,9 @@ def find_routes(request):
             cities = {'from_city': from_city.name, 'to_city': to_city.name}
             for tr in trains:
                 total_time = tr.pop()
-                routes.append({ 'route': tr, 'time': total_time, 'from_city': from_city.name, 'to_city': to_city.name})
+                routes.append({'route': tr, 'time': total_time, 'from_city': from_city.name, 'to_city': to_city.name})
                 
-            
-            return render(request, 'routes/home.html', {"form": form, 'routes':routes, 'cities': cities})
+            return render(request, 'routes/home.html', {"form": form, 'routes': routes, 'cities': cities})
         else:
             return render(request, 'routes/home.html', {"form": form})
             

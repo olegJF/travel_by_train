@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.core.urlresolvers import reverse_lazy
 from django.core.paginator import Paginator, InvalidPage
 from django.views.generic import DetailView, CreateView, UpdateView, DeleteView
@@ -32,7 +32,8 @@ class TrainUpdate(UpdateView):
     form_class = TrainForm
     template_name = 'trains/create.html'
     success_url = reverse_lazy('train:home')
-    
+
+
 def home(request, page_number=1):
     trains = Train.objects.all()
     current_page = Paginator(trains, 10)

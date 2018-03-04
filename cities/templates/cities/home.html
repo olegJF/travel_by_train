@@ -4,7 +4,7 @@
 
 {% block content %}
 <div  class="container">
-    <h2 class="centr"><span>Населенные пункты</span></h2>
+    <h2 class=''><span>Населенные пункты</span></h2>
    
    <div class="row">
         <div class="col">
@@ -58,8 +58,7 @@
                         
                                     {% if objects_list.has_previous %}
                                         <li class="page-item">
-                                        <a class="page-link" href="{% url 'city:home'
-                                                objects_list.previous_page_number %}"  
+                                        <a class="page-link" href="{% url 'city:home' objects_list.previous_page_number %}"
                                                 aria-label="Previous"> 
                                         <span aria-hidden="true">&laquo;</span>
                                         <span class="sr-only">Previous</span>

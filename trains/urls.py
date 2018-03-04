@@ -10,6 +10,4 @@ urlpatterns = [
     url(r'update/(?P<pk>\d+)/$', views.TrainUpdate.as_view(), name='update'),
     url(r'delete/(?P<pk>\d+)/$', views.TrainDelete.as_view(), name='delete'),
     url(r'^$', views.home, name='home'),
-
-
 ]
