@@ -138,8 +138,18 @@ def find_routes(request):
             for tr in trains:
                 total_time = tr.pop()
                 routes.append({'route': tr, 'time': total_time, 'from_city': from_city.name, 'to_city': to_city.name})
-                
-            return render(request, 'routes/home.html', {"form": form, 'routes': routes, 'cities': cities})
+            sorted_route = []
+            if len(routes) == 1:
+                sorted_route = routes
+            else:
+                times = list(set([x['time'] for x in routes]))
+                times = sorted(times)
+                for time in times:
+                    for route in routes:
+                        if time == route['time']:
+                            sorted_route.append(route) 
+            print(sorted_route)
+            return render(request, 'routes/home.html', {"form": form, 'routes': sorted_route, 'cities': cities})
         else:
             return render(request, 'routes/home.html', {"form": form})
             

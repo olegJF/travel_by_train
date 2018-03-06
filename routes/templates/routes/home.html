@@ -32,20 +32,27 @@
     </div>
     
 </div>
-<div  class="container">
+<div  class="container my-5">
     
    <div class="row">
         <div class="col-md-8 mx-auto left">
             {% if routes %}
-                <p> Маршрут из {{cities.from_city}} в {{cities.to_city}}</p>
+                <h3 class="my-5"> Маршруты из {{cities.from_city}} в {{cities.to_city}}</h3>
+                <hr>
                 {% for route in routes %}
                     
-                    <form class="update-data-form" action="{%url 'add_route' %}" method="get">
+                    <form class="update-data-form my-2" action="{%url 'add_route' %}" method="get">
                         <input type='hidden' name='from_city' value='{{route.from_city}}' />
                         <input type='hidden' name='to_city' value='{{route.to_city}}' />
                         <input type='hidden' name='travel_time' value='{{route.time}}' />
                         <input type='hidden' name='trouth_cities' value='{% for tr in route.route %} {{tr.id}} {% endfor %}' />
-                        
+                        {% if forloop.first %}
+                            <div class="row">
+                                    <div class="col-md-10 mx-auto alert alert-primary">
+                                        <h5>Самый короткий маршрут</h5>
+                                    </div>
+                                </div>
+                        {% endif %}    
                         <table class="table table-striped">
                             <thead>
                                 <tr>
