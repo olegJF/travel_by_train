@@ -36,14 +36,14 @@ class RoutesTestCase(TestCase):
         t9 = Train(name='t9', from_city=self.ct_D, to_city=self.ct_E, travel_time=4)
         t9.save()
 
-    def test_model_City_duplicate(self):
+    def test_model_city_duplicate(self):
         try:
             a_city = City(name="A")
             a_city.full_clean()
         except ValidationError as e:
             self.assertEqual({'name': ['Населенный пункт with this Населенный пункт already exists.']}, e.message_dict)
 
-    def test_model_Train_duplicate(self):
+    def test_model_train_duplicate(self):
         try:
             train = Train(name='t2', from_city=self.ct_B, to_city=self.ct_D, travel_time=8)
             train.full_clean()
@@ -57,13 +57,13 @@ class RoutesTestCase(TestCase):
         self.assertEqual(route_views.home, response.resolver_match.func)
         self.assertTemplateUsed(response, template_name='routes/home.html')
 
-    def test_CBV_detail_city_view(self):
+    def test_cbv_detail_city_view(self):
         response = self.client.get(reverse("city:detail", kwargs={'pk': self.ct_A.id}))
         self.assertEqual(200, response.status_code)
         self.assertEqual(city_views.CityDetail.as_view().__name__, response.resolver_match.func.__name__)
         self.assertTemplateUsed(response, template_name='cities/detail.html')
         
-    def test_find_all_routes_from_A_to_E(self):
+    def test_find_all_routes_from_a_to_a(self):
         all_routes = route_views.get_set_of_all_routes()
         all_ways = list(route_views.dfs_paths(all_routes, self.ct_A.id, self.ct_E.id))
         self.assertEqual(len(all_ways), 4)
