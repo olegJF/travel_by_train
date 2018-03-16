@@ -11,7 +11,8 @@ class Train(models.Model):
     travel_time = models.IntegerField(verbose_name='Время в пути')
     
     def clean(self):
-        if Train.objects.filter(from_city=self.from_city, to_city=self.to_city, travel_time=self.travel_time).exists():
+        if Train.objects.filter(from_city=self.from_city, to_city=self.to_city,
+                                travel_time=self.travel_time).exclude(pk=self.pk).exists():
             raise ValidationError('Измените время в пути.')
          
     class Meta:
