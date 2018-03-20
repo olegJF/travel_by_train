@@ -20,7 +20,7 @@ class RouteModelForm(forms.ModelForm):
                            widget=forms.TextInput(attrs={"class": 'form-control'}))
     from_city = forms.CharField(label='Откуда',  widget=forms.HiddenInput(attrs={"class": 'form-control'}))
     to_city = forms.CharField(label='Куда',  widget=forms.HiddenInput(attrs={"class": 'form-control'}))
-    routes = forms.CharField(label='Маршрут',  widget=forms.Textarea(attrs={"class": 'form-control'}))
+    # routes = forms.CharField(label='Маршрут',  widget=forms.Textarea(attrs={"class": 'form-control'}))
     travel_time = forms.IntegerField(label='Время в пути',
                                      widget=forms.HiddenInput(attrs={"class": 'form-control'}))
     trouth_cities = forms.CharField(widget=forms.HiddenInput(attrs={"class": 'form-control'}))

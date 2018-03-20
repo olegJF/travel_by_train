@@ -77,15 +77,17 @@ def add_route(request):
         for i in trains:
             trains_list += str(i) + ' '
         qs = Train.objects.filter(id__in=trains)
-        route = ''
+        route = []
         for tr in qs:
             f_data = {'name': tr.name, 'from_': tr.from_city, 'to': tr.to_city, 'time': tr.travel_time}
-            route += 'Поезд № {name}, следующий из {from_} в {to} .Время в пути {time} \n'.format(**f_data)
+            route.append('Поезд № {name}, следующий из {from_} в {to}. Время в пути {time} '.format(**f_data))
             
         travel_time = data['travel_time']
-        form = RouteModelForm(initial={'from_city': from_city, 'to_city': to_city, 'routes': route,
+        form = RouteModelForm(initial={'from_city': from_city, 'to_city': to_city,
                                        'trouth_cities': trains_list, 'travel_time': travel_time})
-    return render(request, 'routes/create.html', {'form': form})
+    return render(request, 'routes/create.html', {'form': form, 'routes': route, 
+                                                'from_city': from_city, 'to_city': to_city, 
+                                                'travel_time': travel_time})
  
     
 def find_routes(request):

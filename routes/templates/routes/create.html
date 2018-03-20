@@ -10,6 +10,11 @@
            
             <form class="update-data-form" action="" method="post">{% csrf_token %}
                 {{form.as_p}}
+                <p>Маршрут из {{from_city}} в {{ to_city}}, продолжительностью  {{travel_time}}</p>
+                <p>Состоит из:</p>
+                {% for route in routes %}
+                <p> {{route}} </p>
+                {% endfor %}
           
                 <button type="submit" class='btn btn-success ' >Сохранить</button>
             </form>
