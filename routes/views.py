@@ -66,28 +66,32 @@ def add_route(request):
         else:
             return render(request, 'routes/create.html', {"form": form})
     
-    if request.method == "GET":
+    elif request.method == "GET":
         data = request.GET
-        from_city = data['from_city']
-        to_city = data['to_city']
-        trouth_cities = data['trouth_cities'].split(' ')
-        trains = [int(x) for x in trouth_cities if x.isalnum()]
-        # print(trains)
-        trains_list = ''
-        for i in trains:
-            trains_list += str(i) + ' '
-        qs = Train.objects.filter(id__in=trains)
-        route = []
-        for tr in qs:
-            f_data = {'name': tr.name, 'from_': tr.from_city, 'to': tr.to_city, 'time': tr.travel_time}
-            route.append('Поезд № {name}, следующий из {from_} в {to}. Время в пути {time} '.format(**f_data))
-            
-        travel_time = data['travel_time']
-        form = RouteModelForm(initial={'from_city': from_city, 'to_city': to_city,
-                                       'trouth_cities': trains_list, 'travel_time': travel_time})
-    return render(request, 'routes/create.html', {'form': form, 'routes': route, 
-                                                'from_city': from_city, 'to_city': to_city, 
-                                                'travel_time': travel_time})
+        if data:
+            from_city = data['from_city']
+            to_city = data['to_city']
+            trouth_cities = data['trouth_cities'].split(' ')
+            trains = [int(x) for x in trouth_cities if x.isalnum()]
+            # print(trains)
+            trains_list = ''
+            for i in trains:
+                trains_list += str(i) + ' '
+            qs = Train.objects.filter(id__in=trains)
+            route = []
+            for tr in qs:
+                f_data = {'name': tr.name, 'from_': tr.from_city, 'to': tr.to_city, 'time': tr.travel_time}
+                route.append('Поезд № {name}, следующий из {from_} в {to}. Время в пути {time} '.format(**f_data))
+                
+            travel_time = data['travel_time']
+            form = RouteModelForm(initial={'from_city': from_city, 'to_city': to_city,
+                                        'trouth_cities': trains_list, 'travel_time': travel_time})
+            return render(request, 'routes/create.html', {'form': form, 'routes': route, 
+                                                    'from_city': from_city, 'to_city': to_city, 
+                                                    'travel_time': travel_time})
+        else:
+            messages.error(request, 'Вы не можете сохранить несуществующий маршрут!')
+            return redirect('/')
  
     
 def find_routes(request):
@@ -105,6 +109,9 @@ def find_routes(request):
             traveling_time = data['traveling_time']
             all_routes = get_set_of_all_routes()
             all_ways = list(dfs_paths(all_routes, from_city.id, to_city.id))
+            if len(all_ways) == 0:
+                messages.error(request, 'Маршрута, удовлетворяющего условиям поиска пока не существует! Измените даные.')
+                return render(request, 'routes/home.html', {"form": form})
             if trouth_cities_qs.exists():
                 for city in trouth_cities_qs:
                     trouth_city.append(city.id)
@@ -154,6 +161,10 @@ def find_routes(request):
             return render(request, 'routes/home.html', {"form": form, 'routes': sorted_route, 'cities': cities})
         else:
             return render(request, 'routes/home.html', {"form": form})
+    else:
+        messages.error(request, 'Создайте маршрут!')
+        form = RouteForm()
+        return render(request, 'routes/home.html', {"form": form})
             
 
 class RouteDetail(DetailView):
