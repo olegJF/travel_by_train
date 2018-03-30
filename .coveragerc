@@ -1,0 +1,3 @@
+[run]
+source = ./routes/
+omit = *migrations*, *tests*
