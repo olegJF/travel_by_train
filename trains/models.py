@@ -10,13 +10,14 @@ class Train(models.Model):
     to_city = models.ForeignKey(City, verbose_name='Куда', on_delete=models.CASCADE, related_name="to_city")
     travel_time = models.IntegerField(verbose_name='Время в пути')
     
-    def clean(self):
+    def clean(self, *args, **kwargs):
         if Train.objects.filter(from_city=self.from_city, to_city=self.to_city,
                                 travel_time=self.travel_time).exclude(pk=self.pk).exists():
             raise ValidationError('Измените время в пути.')
         
         if  self.from_city == self.to_city:
             raise ValidationError('Такой маршрут невозможен! Измините город прибытия.')
+        return super(Train, self).clean(*args, **kwargs)
             
             
     class Meta:
